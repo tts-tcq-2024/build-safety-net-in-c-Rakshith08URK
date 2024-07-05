@@ -34,10 +34,18 @@ char* soundex(const char* str) {
 
     soundex_code[code_idx++] = toupper(str[0]);
 
-    for (int i = 1; i < len; i++) {
-        char c = soundex_code(tolower(str[i]));
-        if (c != '0' && c != soundex_code[code_idx - 1]) {
-            soundex_code[code_idx++] = c;
+     for (int i = 1; i < len; i++) {
+        char c = tolower(str[i]);
+        char* p = strchr(soundex_map, c);
+        char code = '0';
+
+        if (p) {
+            code = '1' + (p - soundex_map) / 7;
+        }
+
+        // Add code to Soundex code if different from previous code
+        if (code != '0' && code != soundex_code[code_idx - 1]) {
+            soundex_code[code_idx++] = code;
         }
     }
 
