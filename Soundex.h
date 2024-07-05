@@ -37,18 +37,12 @@ char* soundex(const char* str) {
      for (int i = 1; i < len; i++) {
         char c = tolower(str[i]);
         const char* p = strchr(soundex_map, c);
-        char code = '0';
+        char code = p ? ('1' + (p - soundex_map) / 7) : '0';
 
-        if (p) {
-            code = '1' + (p - soundex_map) / 7;
-        }
-
-        // Add code to Soundex code if different from previous code
         if (code != '0' && code != soundex_code[code_idx - 1]) {
             soundex_code[code_idx++] = code;
         }
     }
-
     while (code_idx < MAX_SOUNDEX_CODE_LENGTH) {
         soundex_code[code_idx++] = '0';
     }
