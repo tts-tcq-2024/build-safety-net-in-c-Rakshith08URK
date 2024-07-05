@@ -36,7 +36,7 @@ char* soundex(const char* str) {
 
      for (int i = 1; i < len; i++) {
         char c = tolower(str[i]);
-        char* p = strchr(soundex_map, c);
+        const char* p = strchr(soundex_map, c);
         char code = '0';
 
         if (p) {
