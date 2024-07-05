@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "soundex.h"
+#include "Soundex.h"
 #include <assert.h>
 
 void test_soundex_simple() {
