@@ -32,7 +32,9 @@ char* soundex(const char* str) {
 
     for (int i = 1; i < len; i++) {
         char c = tolower(str[i]);
-        char code = soundex_code(c);
+        const char* p = strchr(soundex_map, c);
+        char code = p ? '1' + (p - soundex_map) / 7 : '0';
+
         if (code != '0' && code != soundex_code[code_idx - 1]) {
             soundex_code[code_idx++] = code;
         }
