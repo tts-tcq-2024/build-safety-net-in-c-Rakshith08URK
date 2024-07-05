@@ -19,12 +19,8 @@ static const char soundex_map[] = {
 
 static char soundex_code(char c) {
     c = tolower(c);
-    for (int i = 0; i < sizeof(soundex_map) / sizeof(soundex_map[0]); i++) {
-        if (strchr(soundex_map, c)) {
-            return '1' + (i / 7);
-        }
-    }
-    return '0'; // default to 0 if not found
+    const char* p = strchr(soundex_map, c);
+    return p ? '1' + (p - soundex_map) / 7 : '0';
 }
 
 char* soundex(const char* str) {
@@ -34,15 +30,14 @@ char* soundex(const char* str) {
 
     soundex_code[code_idx++] = toupper(str[0]);
 
-     for (int i = 1; i < len; i++) {
+    for (int i = 1; i < len; i++) {
         char c = tolower(str[i]);
-        const char* p = strchr(soundex_map, c);
-        char code = p ? ('1' + (p - soundex_map) / 7) : '0';
-
+        char code = soundex_code(c);
         if (code != '0' && code != soundex_code[code_idx - 1]) {
             soundex_code[code_idx++] = code;
         }
     }
+
     while (code_idx < MAX_SOUNDEX_CODE_LENGTH) {
         soundex_code[code_idx++] = '0';
     }
