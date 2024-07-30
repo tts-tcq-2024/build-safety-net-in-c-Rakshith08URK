@@ -1,40 +1,60 @@
 #ifndef SOUNDEX_H
 #define SOUNDEX_H
 
-#include "Soundex.h"
-#include <ctype.h>
+#include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
-char getSoundexCode(char c) {
-    c = toupper(c);
-    switch (c) {
-        case 'B': case 'F': case 'P': case 'V': return '1';
-        case 'C': case 'G': case 'J': case 'K': case 'Q': case 'S': case 'X': case 'Z': return '2';
-        case 'D': case 'T': return '3';
-        case 'L': return '4';
-        case 'M': case 'N': return '5';
-        case 'R': return '6';
-        default: return '0'; // For A, E, I, O, U, H, W, Y
+#define MAX_SOUNDEX_CODE_LENGTH 4
+#define SOUNDEX_CODE_SIZE (MAX_SOUNDEX_CODE_LENGTH + 1)
+
+static const char soundex_map[] = {
+    'b', 'f', 'p', 'v', // b, f, p, v
+    'c', 'g', 'j', 'k', 'q', 's', 'x', 'z', // c, g, j, k, q, s, x, z
+    'd', 't', // d, t
+    'l', // l
+    'm', 'n', // m, n
+    'r', // r
+};
+
+static char get_soundex_code(char c) {
+    c = tolower(c);
+    const char* p = strchr(soundex_map, c);
+    return p ? '1' + (p - soundex_map) / 7 : '0';
+}
+
+static void init_soundex_code(char* soundex_code) {
+    soundex_code[0] = '\0';
+}
+
+static void encode_first_char(const char* str, char* soundex_code) {
+    soundex_code[0] = toupper(str[0]);
+}
+
+static void encode_remaining_chars(const char* str, char* soundex_code) {
+    int code_idx = 1;
+    for (int i = 1; i < strlen(str); i++) {
+        char c = tolower(str[i]);
+        char code = get_soundex_code(c);
+        soundex_code[code_idx++] = code;
     }
 }
 
-void generateSoundex(const char *name, char *soundex) {
-    int len = strlen(name);
-    soundex[0] = toupper(name[0]);
-    int sIndex = 1;
-
-    for (int i = 1; i < len && sIndex < 4; i++) {
-        char code = getSoundexCode(name[i]);
-        if (code != '0' && code != soundex[sIndex - 1]) {
-            soundex[sIndex++] = code;
-        }
+static void pad_with_zeros(char* soundex_code) {
+    int code_idx = strlen(soundex_code);
+    while (code_idx < MAX_SOUNDEX_CODE_LENGTH) {
+        soundex_code[code_idx++] = '0';
     }
+    soundex_code[code_idx] = '\0'; // null-terminate
+}
 
-    while (sIndex < 4) {
-        soundex[sIndex++] = '0';
-    }
-
-    soundex[4] = '\0';
+char* soundex(const char* str) {
+    static char soundex_code[SOUNDEX_CODE_SIZE];
+    init_soundex_code(soundex_code);
+    encode_first_char(str, soundex_code);
+    encode_remaining_chars(str, soundex_code);
+    pad_with_zeros(soundex_code);
+    return soundex_code;
 }
 
 #endif // SOUNDEX_H
