@@ -36,9 +36,7 @@ static void encode_remaining_chars(const char* str, char* soundex_code) {
     for (int i = 1; i < strlen(str); i++) {
         char c = tolower(str[i]);
         char code = get_soundex_code(c);
-        if (code != '0' && code != soundex_code[code_idx - 1]) {
-            soundex_code[code_idx++] = code;
-        }
+        soundex_code[code_idx++] = code;
     }
 }
 
